@@ -1,5 +1,6 @@
 const MongoLib = require('../lib/mongo')
 
+// Movie CRUD service
 class MoviesService {
     constructor() {
         this.collection = 'movies';

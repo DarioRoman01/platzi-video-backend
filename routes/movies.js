@@ -1,12 +1,14 @@
 const express = require('express');
 const MoviesService = require('../services/movies');
 
+// movies API router
 function moviesApi(app) {
     const router = express.Router();
     app.use('/api/movies', router);
 
     const moviesService = new MoviesService();
 
+    // List all movies
     router.get('/', async (request, reponse, next) => {
         const { tags } = request.query;
         try {
@@ -20,11 +22,11 @@ function moviesApi(app) {
         }
     });
 
+    // retrieve movie by id
     router.get('/:movieId', async (request, reponse, next) => {
         const { movieId } = request.params;
         try {
             const movie = await moviesService.getMovie({ movieId });
-
             reponse.status(200).json({
                 data: movie,
                 message: 'Movie retrieved'
@@ -34,6 +36,7 @@ function moviesApi(app) {
         }
     });
 
+    // Handle movies creation
     router.post('/', async (request, reponse, next) => {
         const { body:movie } = request;
         try {
@@ -47,6 +50,7 @@ function moviesApi(app) {
         }
     });
 
+    // Handle update movies
     router.put('/:movieId', async (request, reponse, next) => {
         const { movieId } = request.params;
         const { body:movie } = request;
@@ -61,6 +65,7 @@ function moviesApi(app) {
         }
     });
 
+    // Delte movie by id
     router.delete('/:movieId', async (request, reponse, next) => {
         const { movieId } = request.params;
         try {
@@ -73,7 +78,6 @@ function moviesApi(app) {
             next(err);
         }
     });
-
 }
 
 module.exports = moviesApi;

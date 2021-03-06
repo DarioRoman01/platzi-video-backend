@@ -1,3 +1,4 @@
+// Movies Mock
 const moviesMock = [
     {
         "id": "cf64e508-bb4a-43ec-ae33-ca05a7466582",
