@@ -35,7 +35,7 @@ function moviesApi(app) {
     });
 
     router.post('/', async (request, reponse, next) => {
-        const { body:movie } = request.body;
+        const { body:movie } = request;
         try {
             const createdMovieId = await moviesService.createMovie({ movie })
             reponse.status(201).json({
@@ -60,20 +60,6 @@ function moviesApi(app) {
             next(err);
         }
     });
-
-    router.patch('/:movieId', async (request, response, next) => {
-        const { movieId } = request.params;
-        const { body:movie } = request
-        try {
-            const partialUpdatedMovieId = await moviesService.partialUpdateMovie({ movieId, movie })
-            response.status(200).json({
-                data: partialUpdatedMovieId,
-                message: 'Movie partially updated'
-            }); 
-        } catch(err) {
-            next(err);
-        }
-    })
 
     router.delete('/:movieId', async (request, reponse, next) => {
         const { movieId } = request.params;
