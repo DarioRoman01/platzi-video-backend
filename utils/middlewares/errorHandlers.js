@@ -9,6 +9,7 @@ function withErrorStack(error, stack) {
 }
 
 function logErrors(err, _req, _res, next) {
+    console.log(err);  // eslint-disable-line
     next(err);
 }
 
