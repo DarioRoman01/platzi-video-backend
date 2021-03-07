@@ -1,6 +1,11 @@
 const express = require('express');
 const MoviesService = require('../services/movies');
 const validarionHandler = require('../utils/middlewares/validationHandler');
+const cacheResponse = require('../utils/cacheResponse');
+const { 
+  FIVE_MINUTES_IN_SECONDS,
+  SIXTY_MINUTES_IN_SECONDS 
+} = require('../utils/time')
 const {
   movieIdSchema,
   createMovieSchema,
@@ -15,11 +20,12 @@ function moviesApi(app) {
   const moviesService = new MoviesService();
 
   // List all movies
-  router.get('/', async (request, reponse, next) => {
+  router.get('/', async (request, response, next) => {
+    cacheResponse(response, FIVE_MINUTES_IN_SECONDS);
     const { tags } = request.query;
     try {
       const movies = await moviesService.getMovies({ tags });
-      reponse.status(200).json({
+      response.status(200).json({
         data: movies,
         message: 'Movies listed',
       });
@@ -32,11 +38,12 @@ function moviesApi(app) {
   router.get(
     '/:movieId',
     validarionHandler({ movieId: movieIdSchema }, 'params'),
-    async (request, reponse, next) => {
+    async (request, response, next) => {
+      cacheResponse(response, SIXTY_MINUTES_IN_SECONDS);
       const { movieId } = request.params;
       try {
         const movie = await moviesService.getMovie({ movieId });
-        reponse.status(200).json({
+        response.status(200).json({
           data: movie,
           message: 'Movie retrieved',
         });
@@ -50,11 +57,11 @@ function moviesApi(app) {
   router.post(
     '/',
     validarionHandler(createMovieSchema),
-    async (request, reponse, next) => {
+    async (request, response, next) => {
       const { body: movie } = request;
       try {
         const createdMovieId = await moviesService.createMovie({ movie });
-        reponse.status(201).json({
+        response.status(201).json({
           data: createdMovieId,
           message: 'Movie created',
         });
@@ -69,7 +76,7 @@ function moviesApi(app) {
     '/:movieId',
     validarionHandler({ movieId: movieIdSchema }, 'params'),
     validarionHandler(updateMovieSchema),
-    async (request, reponse, next) => {
+    async (request, response, next) => {
       const { movieId } = request.params;
       const { body: movie } = request;
       try {
@@ -77,7 +84,7 @@ function moviesApi(app) {
           movieId,
           movie,
         });
-        reponse.status(200).json({
+        response.status(200).json({
           data: updatedMovieid,
           message: 'Movie updated',
         });
@@ -91,11 +98,11 @@ function moviesApi(app) {
   router.delete(
     '/:movieId',
     validarionHandler({ movieId: movieIdSchema }, 'params'),
-    async (request, reponse, next) => {
+    async (request, response, next) => {
       const { movieId } = request.params;
       try {
         const deletedMovieId = await moviesService.deleteMovie({ movieId });
-        reponse.status(200).json({
+        response.status(200).json({
           data: deletedMovieId,
           message: 'Movie deleted',
         });
